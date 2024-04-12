@@ -34,6 +34,12 @@ class MainActivity : AppCompatActivity() {
     lateinit var handlerThread: HandlerThread
     lateinit var textureView: TextureView
     lateinit var cameraManager: CameraManager
+    val bodyPartNames = arrayOf(
+        "鼻子", "左眼", "右眼", "左耳", "右耳",
+        "左肩", "右肩", "左肘", "右肘", "左腕",
+        "右腕", "左胯", "右胯", "左膝", "右膝",
+        "左踝", "右踝"
+    )
     val points: MutableList<Pair<Float, Float>> = mutableListOf() // Store screen coordinates of points
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -79,7 +85,6 @@ class MainActivity : AppCompatActivity() {
                 var h = bitmap.height
                 var w = bitmap.width
                 var x = 0
-                var featureIndex = 0
 
                 val mutable = bitmap.copy(Bitmap.Config.ARGB_8888, true)
                 val canvas = Canvas(mutable) // Create canvas here
@@ -91,11 +96,15 @@ class MainActivity : AppCompatActivity() {
                         val pointY = outputFeature0.get(x) * h
                         points.add(pointX to pointY) // Store screen coordinates
 
+                        val bodyPartId = (x / 3).coerceAtMost(bodyPartNames.size - 1)
+                        val bodyPartName = bodyPartNames[bodyPartId]
+
                         // Draw point and label only if confidence is high enough
                         canvas.drawCircle(pointX, pointY, 10f, paint)
-                        canvas.drawText("($pointX, $pointY)", pointX, pointY, paint) // Draw coordinates
-                        canvas.drawText("$featureIndex", pointX + 20, pointY - 20, paint) // Draw feature index
-                        featureIndex++
+                        canvas.drawText(bodyPartName, pointX, pointY, paint) // Draw body part name
+
+                        // Log the coordinates
+                        Log.d("BodyPart", "$bodyPartName: ($pointX, $pointY)")
                     }
                     x += 3
                 }
