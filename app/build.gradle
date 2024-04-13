@@ -32,6 +32,7 @@ android {
     buildFeatures {
         mlModelBinding true
     }
+    namespace 'com.programminghut.pose_detection'
 }
 
 dependencies {
